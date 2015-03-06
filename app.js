@@ -14,22 +14,30 @@ app.get('/', function (req, res) {
   res.send('This is a server response.');
 });
 
-// GET all users
+// Retrieve all users
 app.get('/api/users', function (req, res) {
-    return User.find(function (err, users) {
+    User.find(function (err, users) {
         if (err) {
             console.error(err);
         }
 
-        return res.send(users);
+        res.send(users);
     })
 });
 
-// POST a new user
-app.post('/api/users', function (req, res) {
+// Retrieve a single user
+app.get('/api/users/:user_id', function (req, res) {
+    User.findById(req.params.user_id, function (err, user) {
+        if (err) {
+            console.error(err);
+        }
+        
+        res.send(user);
+    })
+});
 
-    console.log('req.body: ', req.body);
-    console.log('req.body.username: ', req.body.username);
+// Create a new user
+app.post('/api/users', function (req, res) {
 
     var user = new User({
         username: req.body.username,
@@ -44,7 +52,25 @@ app.post('/api/users', function (req, res) {
         }
     });
 
-    return res.send(user);
+    res.send(user);
+});
+
+// Update an existing user's twerk count
+app.put('/api/users/:user_id', function(req, res) {
+    User.findById(req.params.user_id, function (err, user) {
+        if (err) {
+            console.error(err);
+        }
+
+        user.twerks = req.body.twerks;
+        user.save( function (err) {
+          if (err) {
+            return console.error(err); 
+          } else {
+            return console.log('updated twerk count for user');
+          }
+        });
+    });
 });
 
 
