@@ -18,9 +18,8 @@ app.get('/', function (req, res) {
 app.get('/api/users', function (req, res) {
     User.find(function (err, users) {
         if (err) {
-            console.error(err);
+            res.send(err);
         }
-
         res.send(users);
     })
 });
@@ -29,7 +28,7 @@ app.get('/api/users', function (req, res) {
 app.get('/api/users/:user_id', function (req, res) {
     User.findById(req.params.user_id, function (err, user) {
         if (err) {
-            console.error(err);
+            res.send(err);
         }
         
         res.send(user);
@@ -46,7 +45,7 @@ app.post('/api/users', function (req, res) {
 
     user.save( function (err) {
         if (err) {
-            return console.error(err); 
+            res.send(err);
         } else {
             return console.log('created new user');
         }
@@ -59,13 +58,13 @@ app.post('/api/users', function (req, res) {
 app.put('/api/users/:user_id', function(req, res) {
     User.findById(req.params.user_id, function (err, user) {
         if (err) {
-            console.error(err);
+            cres.send(err);
         }
 
         user.twerks = req.body.twerks;
         user.save( function (err) {
           if (err) {
-            return console.error(err); 
+            res.send(err);
           } else {
             return console.log('updated twerk count for user');
           }
@@ -73,7 +72,15 @@ app.put('/api/users/:user_id', function(req, res) {
     });
 });
 
-
+// Remove a user
+app.delete('/api/users/:user_id', function(req, res) {
+    User.remove({ _id: req.params.user_id }, function(err, user) {
+        if (err) {
+            res.send(err);
+        }
+        return console.log('removed user');
+    });
+});
 
 app.listen(port);
 console.log ('Server now listening on port ' + port);
